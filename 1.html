@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>村级行政区划查询</title>
+  <style>
+    /* 设计理念：克制的政务数据工作台。以米白、深墨绿和赭红强调数据秩序，避免装饰性干扰。 */
+    :root{--ink:#19352f;--muted:#70807b;--paper:#f7f5ef;--card:#fffefa;--line:#e2e5dc;--accent:#c85c3d;--accent-dark:#a9442c;--green:#2f6b5c;--shadow:0 18px 50px rgba(35,56,48,.10);--ease:cubic-bezier(.23,1,.32,1)}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+    body{background-image:radial-gradient(circle at 15% 10%,rgba(200,92,61,.07),transparent 26rem),linear-gradient(135deg,#f7f5ef 0%,#eef2ea 100%)}
+    .shell{max-width:1280px;margin:0 auto;padding:42px 28px 60px}.topbar{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:32px}
+    .eyebrow{font-size:12px;letter-spacing:.2em;color:var(--accent);font-weight:800;margin-bottom:12px}.title{font-family:Georgia,"Songti SC",serif;font-size:clamp(34px,5vw,62px);line-height:1.02;letter-spacing:-.04em;margin:0;color:var(--ink)}
+    .subtitle{max-width:650px;color:var(--muted);line-height:1.8;margin:16px 0 0;font-size:15px}.mark{width:64px;height:64px;border:1px solid rgba(25,53,47,.22);display:grid;place-items:center;position:relative;transform:rotate(45deg);margin:10px 12px 0 0}.mark:before,.mark:after{content:"";position:absolute;background:var(--accent)}.mark:before{width:2px;height:78%;}.mark:after{height:2px;width:78%}.mark span{transform:rotate(-45deg);font-family:Georgia,serif;font-size:24px;color:var(--ink)}
+    .grid{display:grid;grid-template-columns:310px 1fr;gap:22px;align-items:start}.card{background:rgba(255,254,250,.86);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:18px}.panel{padding:22px}.panel h2{font-family:Georgia,"Songti SC",serif;font-size:22px;margin:0 0 5px}.panel-intro{font-size:13px;color:var(--muted);line-height:1.7;margin:0 0 20px}.upload-zone{border:1px dashed #b9c6bd;border-radius:13px;padding:18px;background:#f5f7f1;transition:.18s var(--ease)}.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:#fff7f2}.upload-zone strong{display:block;font-size:14px;margin-bottom:5px}.upload-zone small{color:var(--muted);line-height:1.6;display:block}.file-input{width:100%;margin-top:13px;font-size:12px}.file-status{margin-top:14px;display:grid;gap:8px}.file-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);padding-bottom:8px;border-bottom:1px solid #edf0e9}.file-row b{color:var(--green);font-weight:700}.hint{padding:13px;border-left:3px solid var(--accent);background:#fff8f2;color:#6d625b;font-size:12px;line-height:1.7;margin-top:18px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer;transition:.16s var(--ease);font-size:13px}.btn:hover{border-color:var(--green);transform:translateY(-1px)}.btn:active{transform:scale(.97)}.btn.primary{background:var(--ink);border-color:var(--ink);color:white}.btn.accent{background:var(--accent);border-color:var(--accent);color:white}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.field label{display:block;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:0 0 7px}.field select,.search{width:100%;border:1px solid #d6ddd4;background:#fffefa;color:var(--ink);border-radius:10px;padding:12px 13px;font:inherit;font-size:13px;outline:none}.field select:focus,.search:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,92,61,.12)}.search-wrap{position:relative;margin-bottom:20px}.search{padding-left:39px}.search-icon{position:absolute;left:14px;top:12px;color:var(--muted);font-size:15px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.stat{padding:11px 15px;background:#f1f4ee;border-radius:10px;min-width:120px}.stat b{display:block;font-family:Georgia,serif;font-size:22px;color:var(--green)}.stat span{font-size:11px;color:var(--muted)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:white;max-height:560px}.table{border-collapse:collapse;width:100%;min-width:650px;font-size:13px}.table th{position:sticky;top:0;background:#edf2eb;color:var(--green);text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:13px 14px;z-index:1}.table td{padding:13px 14px;border-top:1px solid #eef0eb;white-space:nowrap}.table tr:hover td{background:#fff8f2}.empty{padding:52px 20px;text-align:center;color:var(--muted);line-height:1.8}.empty strong{display:block;color:var(--ink);font-family:Georgia,serif;font-size:21px;margin-bottom:6px}.footer{color:#87938c;font-size:12px;text-align:center;margin-top:26px}.badge{display:inline-block;padding:4px 8px;border-radius:20px;background:#f7e4dc;color:var(--accent-dark);font-size:11px;font-weight:800}.notice{display:none;margin:0 0 16px;padding:12px 14px;border-radius:10px;background:#fff1ed;color:#9b4936;font-size:13px}.notice.show{display:block}@media(max-width:900px){.grid{grid-template-columns:1fr}.filters{grid-template-columns:repeat(2,1fr)}.topbar{align-items:center}}@media(max-width:560px){.shell{padding:28px 15px 40px}.mark{display:none}.filters{grid-template-columns:1fr}.panel{padding:16px}.title{font-size:42px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div><div class="eyebrow">ADMINISTRATIVE DATA / 2026</div><h1 class="title">村级行政区划查询</h1><p class="subtitle">加载本地 CSV 数据后，沿着省份、城市、县 / 区、乡 / 镇逐级定位村级记录。所有数据只在当前浏览器中处理，不会上传到网络。</p></div>
+      <div class="mark" aria-hidden="true"><span>村</span></div>
+    </header>
+    <div class="grid">
+      <aside class="card panel">
+        <h2>数据入口</h2><p class="panel-intro">页面部署后会自动从 GitHub Pages 的 <b>data/</b> 相对目录读取数据，无需手动选择文件。</p>
+        <div class="upload-zone"><strong>GitHub Pages 数据目录</strong><small>页面启动时会自动读取当前网页目录下的 <b>data/</b> 文件夹。</small><div style="margin-top:12px;font-family:monospace;font-size:12px;line-height:1.9;color:var(--green)">data/<br>├─ provinces.csv<br>├─ cities.csv<br>├─ areas.csv<br>├─ streets.csv<br>└─ villages.csv.gz</div></div>
+        <div class="file-status" id="fileStatus"><div class="file-row"><span>provinces.csv</span><b>等待加载</b></div><div class="file-row"><span>cities.csv</span><b>等待加载</b></div><div class="file-row"><span>areas.csv</span><b>等待加载</b></div><div class="file-row"><span>streets.csv</span><b>等待加载</b></div><div class="file-row"><span>villages.csv.gz</span><b>等待加载</b></div></div>
+        <div class="hint">村级数据使用 <b>villages.csv.gz</b>，浏览器会自动解压后读取。村级文件建议包含 <b>code,name,streetCode,provinceCode,cityCode,areaCode</b> 字段。</div>
+      </aside>
+      <section class="card panel">
+        <div class="toolbar"><button class="btn primary" id="clearBtn">清空筛选</button><button class="btn accent" id="exportBtn" disabled>导出当前结果</button><span class="badge" id="dataBadge">等待数据</span></div>
+        <div class="notice" id="notice"></div>
+        <div class="filters">
+          <div class="field"><label for="provinceSelect">省份</label><select id="provinceSelect" disabled><option value="">请选择省份</option></select></div>
+          <div class="field"><label for="citySelect">城市</label><select id="citySelect" disabled><option value="">请选择城市</option></select></div>
+          <div class="field"><label for="areaSelect">县 / 区</label><select id="areaSelect" disabled><option value="">请选择县 / 区</option></select></div>
+          <div class="field"><label for="streetSelect">乡 / 镇</label><select id="streetSelect" disabled><option value="">请选择乡 / 镇</option></select></div>
+        </div>
+        <div class="search-wrap"><span class="search-icon">⌕</span><input class="search" id="searchInput" placeholder="按村名或村编码搜索……" disabled /></div>
+        <div class="stats"><div class="stat"><b id="resultCount">0</b><span>当前匹配村数</span></div><div class="stat"><b id="loadedCount">0</b><span>已加载村记录</span></div><div class="stat"><b id="selectedPath">—</b><span>当前定位层级</span></div></div>
+        <div class="table-wrap" id="tableWrap"><div class="empty"><strong>尚未加载数据</strong>请从左侧选择 CSV 文件，页面将自动建立四级联动关系。</div></div>
+      </section>
+    </div>
+    <div class="footer">本地单文件工具 · UTF-8 CSV · 数据处理不离开你的电脑</div>
+  </main>
+<script>
+/* 交互理念：让筛选路径逐级收敛，状态反馈清晰，所有动作即时响应且不打断用户。 */
+(() => {
+  const state = { provinces:[], cities:[], areas:[], streets:[], villages:[], loaded:{}, result:[] };
+  const $ = id => document.getElementById(id);
+  const els = { fileStatus:$('fileStatus'), notice:$('notice'), province:$('provinceSelect'), city:$('citySelect'), area:$('areaSelect'), street:$('streetSelect'), search:$('searchInput'), resultCount:$('resultCount'), loadedCount:$('loadedCount'), selectedPath:$('selectedPath'), tableWrap:$('tableWrap'), badge:$('dataBadge'), clear:$('clearBtn'), export:$('exportBtn') };
+  const aliases = { provinces:['province','provinces','省'], cities:['city','cities','市'], areas:['area','areas','县','区'], streets:['street','streets','town','乡','镇'], villages:['village','villages','村'] };
+  function normalize(s){ return String(s ?? '').replace(/^\uFEFF/,'').trim(); }
+  function detect(name){ const n = name.toLowerCase(); for(const key of Object.keys(aliases)){ if(aliases[key].some(x => n.includes(x))) return key; } return null; }
+  function parseCSV(text){
+    text = text.replace(/^\uFEFF/,''); const rows=[]; let row=[], cell='', quoted=false;
+    for(let i=0;i<text.length;i++){ const c=text[i], next=text[i+1]; if(quoted){ if(c==='"' && next==='"'){cell+='"';i++;} else if(c==='"'){quoted=false;} else cell+=c; } else if(c==='"'){quoted=true;} else if(c===','){row.push(cell);cell='';} else if(c==='\n'){row.push(cell.replace(/\r$/,''));rows.push(row);row=[];cell='';} else cell+=c; }
+    if(cell.length || row.length){row.push(cell.replace(/\r$/,''));rows.push(row);} if(!rows.length) return [];
+    const headers=rows.shift().map(normalize); return rows.filter(r=>r.some(v=>normalize(v)!=='')).map(r=>Object.fromEntries(headers.map((h,i)=>[h,normalize(r[i])])));
+  }
+  function val(obj, names){ const key=Object.keys(obj).find(k => names.includes(k) || names.some(n=>k.toLowerCase()===n.toLowerCase())); return key ? obj[key] : ''; }
+  function code(o){ return val(o,['code','Code','编码']); } function name(o){ return val(o,['name','Name','名称']); }
+  function relation(o, type){ return val(o, type==='province'?['provinceCode','province_code','省代码']:type==='city'?['cityCode','city_code','市代码']:type==='area'?['areaCode','area_code','县区代码']:['streetCode','street_code','乡镇代码']); }
+  function uniqueRows(rows){ const seen=new Set(); return rows.filter(r=>{const k=code(r)||name(r);if(seen.has(k))return false;seen.add(k);return true;}); }
+  function options(select, rows, placeholder){ select.innerHTML=`<option value="">${placeholder}</option>`; uniqueRows(rows).sort((a,b)=>name(a).localeCompare(name(b),'zh-CN')).forEach(r=>{const o=document.createElement('option');o.value=code(r);o.textContent=`${name(r)}  ·  ${code(r)}`;select.appendChild(o);}); select.disabled=false; }
+  function rowsBy(rows, field, value){ return value ? rows.filter(r=>relation(r,field)===value) : rows; }
+  function setNotice(msg){ els.notice.textContent=msg; els.notice.classList.toggle('show',!!msg); }
+  function refresh(){
+    const p=els.province.value,c=els.city.value,a=els.area.value,s=els.street.value,q=els.search.value.trim().toLowerCase();
+    let rows=state.villages;
+    if(p) rows=rows.filter(r=>relation(r,'province')===p); if(c) rows=rows.filter(r=>relation(r,'city')===c); if(a) rows=rows.filter(r=>relation(r,'area')===a); if(s) rows=rows.filter(r=>relation(r,'street')===s);
+    if(q) rows=rows.filter(r=>name(r).toLowerCase().includes(q)||code(r).toLowerCase().includes(q)); state.result=rows;
+    els.resultCount.textContent=rows.length.toLocaleString(); els.loadedCount.textContent=state.villages.length.toLocaleString(); els.selectedPath.textContent=s?'乡 / 镇':a?'县 / 区':c?'城市':p?'省份':'—'; els.export.disabled=!rows.length; render(rows);
+  }
+  function render(rows){
+    if(!rows.length){els.tableWrap.innerHTML='<div class="empty"><strong>没有匹配记录</strong>请调整筛选条件或确认已加载正确的村级 CSV 文件。</div>';return;}
+    const cols=['code','name','streetCode','areaCode','cityCode','provinceCode']; const labels={code:'村编码',name:'村名',streetCode:'乡镇编码',areaCode:'县区编码',cityCode:'城市编码',provinceCode:'省份编码'};
+    const head=cols.map(c=>`<th>${labels[c]}</th>`).join(''); const body=rows.slice(0,5000).map(r=>`<tr>${cols.map(c=>`<td>${escapeHTML(val(r,[c]))}</td>`).join('')}</tr>`).join('');
+    els.tableWrap.innerHTML=`<table class="table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>${rows.length>5000?'<div style="padding:12px;color:#70807b;font-size:12px">结果超过 5,000 条，表格仅展示前 5,000 条；导出功能会包含全部匹配结果。</div>':''}`;
+  }
+  function escapeHTML(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function rebuild(){
+    const p=els.province.value,c=els.city.value,a=els.area.value;
+    options(els.province,state.provinces,'请选择省份'); els.province.value=p;
+    options(els.city,rowsBy(state.cities,'province',p),'请选择城市'); els.city.value=c;
+    options(els.area,rowsBy(state.areas,'city',c),'请选择县 / 区'); els.area.value=a;
+    options(els.street,rowsBy(state.streets,'area',a),'请选择乡 / 镇'); els.street.value=els.street.value;
+    [els.city,els.area,els.street,els.search].forEach(e=>e.disabled=!state.villages.length); refresh();
+  }
+  function cascade(level){
+    if(level==='province'){els.city.value='';els.area.value='';els.street.value='';}
+    if(level==='city'){els.area.value='';els.street.value='';}
+    if(level==='area'){els.street.value='';}
+    const p=els.province.value,c=els.city.value,a=els.area.value;
+    if(level==='province'||level==='city') options(els.city,rowsBy(state.cities,'province',p),'请选择城市');
+    if(level==='province'||level==='city'||level==='area') options(els.area,rowsBy(state.areas,'city',c),'请选择县 / 区');
+    options(els.street,rowsBy(state.streets,'area',a),'请选择乡 / 镇'); refresh();
+  }
+  async function fetchText(path){ const response=await fetch(path); if(!response.ok) throw new Error(`${response.status} ${response.statusText}`); return response.text(); }
+  async function fetchGzipText(path){ if(!('DecompressionStream' in window)) throw new Error('当前浏览器不支持 GZIP 自动解压，请使用最新版 Chrome、Edge 或 Firefox'); const response=await fetch(path); if(!response.ok) throw new Error(`${response.status} ${response.statusText}`); const bytes=await response.arrayBuffer(); try{ const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')); return await new Response(stream).text(); }catch(error){ const plain=new TextDecoder('utf-8').decode(bytes); if(plain.includes('code') || plain.includes('name')) return plain; throw error; } }
+  async function loadRemoteFiles(){
+    setNotice('正在从 data/ 目录加载数据，请稍候……'); els.badge.textContent='加载中';
+    const files=[['provinces','provinces.csv',fetchText],['cities','cities.csv',fetchText],['areas','areas.csv',fetchText],['streets','streets.csv',fetchText],['villages','villages.csv.gz',fetchGzipText]];
+    const errors=[];
+    for(const [type,file,loader] of files){ try{ state[type]=uniqueRows(parseCSV(await loader(`./data/${file}`))); state.loaded[type]=file; }catch(e){ state[type]=[]; errors.push(`${file}：${e.message}`); } }
+    els.fileStatus.innerHTML=files.map(([type,file])=>`<div class="file-row"><span>${file}</span><b style="color:${state.loaded[type]?'var(--green)':'var(--accent-dark)'}">${state.loaded[type]?`${state[type].length.toLocaleString()} 行`:'加载失败'}</b></div>`).join('');
+    els.badge.textContent=state.villages.length?`已加载 ${state.villages.length.toLocaleString()} 条村记录`:'数据未就绪'; els.badge.style.background=state.villages.length?'#e3efe7':'#fff1ed'; els.badge.style.color=state.villages.length?'var(--green)':'var(--accent-dark)'; rebuild();
+    if(errors.length) setNotice(`部分数据加载失败：${errors.join('；')}。请确认这些文件位于网页同级的 data/ 文件夹中。`); else setNotice('数据加载完成，可以开始查询。');
+  }
+  els.province.addEventListener('change',()=>cascade('province'));els.city.addEventListener('change',()=>cascade('city'));els.area.addEventListener('change',()=>cascade('area'));els.street.addEventListener('change',refresh);els.search.addEventListener('input',refresh);
+  els.clear.addEventListener('click',()=>{els.province.value='';els.city.value='';els.area.value='';els.street.value='';els.search.value='';cascade('province');});
+  loadRemoteFiles();
+  els.export.addEventListener('click',()=>{const cols=['code','name','streetCode','areaCode','cityCode','provinceCode'];const esc=x=>`"${String(x??'').replace(/"/g,'""')}"`;const text=cols.join(',')+'\n'+state.result.map(r=>cols.map(c=>esc(val(r,[c]))).join(',')).join('\n');const blob=new Blob(['\uFEFF'+text],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='filtered-villages.csv';a.click();URL.revokeObjectURL(a.href);});
+})();
+</script>
+</body>
+</html>
