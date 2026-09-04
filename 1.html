@@ -103,7 +103,7 @@
     setNotice('正在从 data/ 目录加载数据，请稍候……'); els.badge.textContent='加载中';
     const files=[['provinces','provinces.csv',fetchText],['cities','cities.csv',fetchText],['areas','areas.csv',fetchText],['streets','streets.csv',fetchText],['villages','villages.csv.gz',fetchGzipText]];
     const errors=[];
-    for(const [type,file,loader] of files){ try{ state[type]=uniqueRows(parseCSV(await loader(`./data/${file}`))); state.loaded[type]=file; }catch(e){ state[type]=[]; errors.push(`${file}：${e.message}`); } }
+    for(const [type,file,loader] of files){ try{ state[type]=uniqueRows(parseCSV(await loader(`./${file}`))); state.loaded[type]=file; }catch(e){ state[type]=[]; errors.push(`${file}：${e.message}`); } }
     els.fileStatus.innerHTML=files.map(([type,file])=>`<div class="file-row"><span>${file}</span><b style="color:${state.loaded[type]?'var(--green)':'var(--accent-dark)'}">${state.loaded[type]?`${state[type].length.toLocaleString()} 行`:'加载失败'}</b></div>`).join('');
     els.badge.textContent=state.villages.length?`已加载 ${state.villages.length.toLocaleString()} 条村记录`:'数据未就绪'; els.badge.style.background=state.villages.length?'#e3efe7':'#fff1ed'; els.badge.style.color=state.villages.length?'var(--green)':'var(--accent-dark)'; rebuild();
     if(errors.length) setNotice(`部分数据加载失败：${errors.join('；')}。请确认这些文件位于网页同级的 data/ 文件夹中。`); else setNotice('数据加载完成，可以开始查询。');
