@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全国高等学校名单</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif; background:#f1f5f9; color:#0f172a; }
+  .wrap { max-width:1100px; margin:0 auto; padding:24px 16px 40px; }
+
+  header { background:linear-gradient(135deg,#1e3a8a,#3b82f6); color:#fff; border-radius:14px; padding:28px 28px 24px; margin-bottom:20px; }
+  header h1 { font-size:22px; font-weight:600; letter-spacing:.5px; }
+  header .sub { font-size:13px; opacity:.85; margin-top:6px; }
+  .stats { display:flex; flex-wrap:wrap; gap:12px; margin-top:18px; }
+  .stat { background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); border-radius:10px; padding:10px 18px; min-width:110px; }
+  .stat b { display:block; font-size:22px; font-weight:600; }
+  .stat span { font-size:12px; opacity:.85; }
+
+  .toolbar { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:14px; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  .toolbar input[type=text] { flex:1 1 220px; min-width:180px; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px; outline:none; }
+  .toolbar input[type=text]:focus { border-color:#3b82f6; box-shadow:0 0 0 3px #eff6ff; }
+  select { padding:9px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px; background:#fff; color:#0f172a; outline:none; cursor:pointer; }
+  .chip { padding:8px 14px; border:1px solid #cbd5e1; border-radius:999px; font-size:13px; background:#fff; cursor:pointer; user-select:none; color:#475569; transition:all .15s; }
+  .chip.on { background:#3b82f6; border-color:#3b82f6; color:#fff; }
+  .reset { padding:8px 14px; border:1px solid transparent; border-radius:8px; font-size:13px; background:#f1f5f9; color:#475569; cursor:pointer; }
+  .reset:hover { background:#e2e8f0; }
+
+  .result-bar { display:flex; justify-content:space-between; align-items:center; margin:0 2px 8px; font-size:13px; color:#64748b; }
+  .result-bar b { color:#1d4ed8; font-size:15px; }
+
+  .table-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
+  .scroll { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:860px; }
+  thead th { background:#f8fafc; text-align:left; padding:11px 14px; font-weight:600; color:#475569; border-bottom:1px solid #e2e8f0; white-space:nowrap; font-size:13px; }
+  tbody td { padding:10px 14px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+  tbody tr:hover { background:#f8fafc; }
+  td .nm { font-weight:500; color:#0f172a; }
+  .badge { display:inline-block; font-size:11px; line-height:1; padding:4px 7px; border-radius:5px; margin-left:6px; vertical-align:1px; font-weight:500; }
+  .b985 { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+  .b211 { background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; }
+  .bdfc { background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
+  .bmin { background:#fffbeb; color:#d97706; border:1px solid #fde68a; }
+  .bco  { background:#fdf4ff; color:#a21caf; border:1px solid #f5d0fe; }
+  .lv { display:inline-block; font-size:12px; padding:3px 9px; border-radius:6px; }
+  .lv-bk { background:#eff6ff; color:#1d4ed8; }
+  .lv-zk { background:#f0fdfa; color:#0d9488; }
+  .lv-cr { background:#f5f3ff; color:#7c3aed; }
+  .muted { color:#94a3b8; }
+  .code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; color:#64748b; }
+
+  .pager { display:flex; justify-content:center; align-items:center; gap:8px; padding:14px; flex-wrap:wrap; }
+  .pager button { padding:7px 13px; border:1px solid #cbd5e1; background:#fff; border-radius:8px; font-size:13px; cursor:pointer; color:#334155; }
+  .pager button:disabled { opacity:.4; cursor:not-allowed; }
+  .pager button.cur { background:#3b82f6; border-color:#3b82f6; color:#fff; font-weight:600; }
+  .pager .info { font-size:13px; color:#64748b; margin:0 6px; }
+
+  .empty { text-align:center; padding:56px 20px; color:#94a3b8; font-size:14px; }
+  footer { margin-top:18px; font-size:12.5px; color:#94a3b8; line-height:1.8; }
+  footer a { color:#3b82f6; text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>全国高等学校名单查询</h1>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <div class="toolbar">
+    <input type="text" id="q" placeholder="搜索校名">
+    <select id="fProv"><option value="">全部省份</option></select>
+    <select id="fLv">
+      <option value="">全部层次</option>
+      <option value="本科">本科</option>
+      <option value="专科">专科（高职）</option>
+      <option value="成人">成人高校</option>
+    </select>
+    <select id="fNt">
+      <option value="">全部性质</option>
+      <option value="公办">公办</option>
+      <option value="民办">民办</option>
+      <option value="中外">中外/港澳合作</option>
+    </select>
+    <span class="chip" data-f="1">985</span>
+    <span class="chip" data-f="2">211</span>
+    <span class="chip" data-f="4">双一流</span>
+    <button class="reset" id="reset">重置</button>
+  </div>
+
+  <div class="result-bar"><span>筛选结果 <b id="cnt">0</b> 所</span><span id="rangeInfo"></span></div>
+
+  <div class="table-card">
+    <div class="scroll">
+    <table>
+      <thead><tr>
+        <th style="width:52px">序号</th><th>学校名称</th><th style="width:118px">学校标识码</th>
+        <th style="width:170px">主管部门</th><th style="width:180px">所在地</th>
+        <th style="width:92px">办学层次</th><th style="width:110px">备注</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    </div>
+    <div class="pager" id="pager"></div>
+  </div>
+
+  <footer>
+    <p>· 口径说明：名单不含军队院校及港澳台地区高等学校；「成人高校」指成人高等学校（非普通高考统招序列）。<br>
+    · 办学层次：本科 1412 所 / 专科（高职）1540 所 / 成人高校 244 所；985、211、双一流标签依据教育部公开名单（军校相关 4 所不在本名单内，故 985 计 38、211 计 109、双一流计 144）。<br>
+    · 河北工业大学坐落于天津市，主管部门为河北省，与官方名单口径一致。</p>
+  </footer>
+</div>
+
+<script src="https://sfile.chatglm.cn/workspace/file/39/390472b8e3.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const PAGE = 50;
+  let page = 1, tags = 0;
+  const state = { q:'', prov:'', lv:'', nt:'' };
+
+  // 顶部统计
+  const total = UNI_DATA.length;
+  const bk = UNI_DATA.filter(x=>x.lv==='本科').length;
+  const zk = UNI_DATA.filter(x=>x.lv==='专科').length;
+  const cr = UNI_DATA.filter(x=>x.lv==='成人').length;
+  const dfc = UNI_DATA.filter(x=>x.f&4).length;
+  const mb = UNI_DATA.filter(x=>x.nt==='民办').length;
+  $('stats').innerHTML = [
+    ['总数', total], ['本科', bk], ['专科（高职）', zk], ['成人高校', cr],
+    ['双一流', dfc], ['民办', mb]
+  ].map(s=>`<div class="stat"><b>${s[1]}</b><span>${s[0]}（所）</span></div>`).join('');
+
+  // 省份下拉（按名单出现顺序）
+  const provs = [...new Set(UNI_DATA.map(x=>x.prov))];
+  $('fProv').innerHTML = '<option value="">全部省份</option>' + provs.map(p=>`<option>${p}</option>`).join('');
+
+  function levelBadge(lv){
+    if (lv==='本科') return '<span class="lv lv-bk">本科</span>';
+    if (lv==='专科') return '<span class="lv lv-zk">专科</span>';
+    return '<span class="lv lv-cr">成人</span>';
+  }
+  function tagBadges(r){
+    let s = '';
+    if (r.f&1) s += '<span class="badge b985">985</span>';
+    if (r.f&2) s += '<span class="badge b211">211</span>';
+    if (r.f&4) s += '<span class="badge bdfc">双一流</span>';
+    if (r.nt==='民办') s += '<span class="badge bmin">民办</span>';
+    if (r.nt.includes('中外') || r.nt.includes('合作办学') || r.nt.includes('境外')) s += '<span class="badge bco">合作</span>';
+    return s;
+  }
+
+  function filtered(){
+    const q = state.q.trim().toLowerCase();
+    return UNI_DATA.filter(r=>{
+      if (state.prov && r.prov!==state.prov) return false;
+      if (state.lv && r.lv!==state.lv) return false;
+      if (state.nt==='公办' && r.nt!=='') return false;
+      if (state.nt==='民办' && r.nt!=='民办') return false;
+      if (state.nt==='中外' && !(r.nt.includes('中外')||r.nt.includes('合作办学')||r.nt.includes('境外'))) return false;
+      if (tags && !(r.f & tags)) return false;
+      if (q && !(r.name.toLowerCase().includes(q) || r.code.includes(q) || r.loc.includes(state.q.trim()))) return false;
+      return true;
+    });
+  }
+
+  function render(){
+    const list = filtered();
+    $('cnt').textContent = list.length;
+    const pages = Math.max(1, Math.ceil(list.length/PAGE));
+    if (page > pages) page = pages;
+    const start = (page-1)*PAGE, end = Math.min(start+PAGE, list.length);
+    $('rangeInfo').textContent = list.length ? `第 ${start+1}-${end} 条 / 共 ${list.length} 条` : '';
+
+    if (!list.length) {
+      $('tbody').innerHTML = '<tr><td colspan="7"><div class="empty">没有符合条件的学校，试试放宽筛选条件</div></td></tr>';
+      $('pager').innerHTML = '';
+      return;
+    }
+    $('tbody').innerHTML = list.slice(start, end).map((r,i)=>`
+      <tr>
+        <td class="muted">${start+i+1}</td>
+        <td><span class="nm">${r.name}</span>${tagBadges(r)}</td>
+        <td class="code">${r.code}</td>
+        <td>${r.dept}</td>
+        <td>${r.loc===r.prov ? r.prov : r.prov+' · '+r.loc}</td>
+        <td>${levelBadge(r.lv)}</td>
+        <td class="muted">${r.nt||'公办'}</td>
+      </tr>`).join('');
+
+    // 分页
+    const btns = [];
+    const push = (p, txt, cur, dis) => btns.push(`<button data-p="${p}" ${cur?'class="cur"':''} ${dis?'disabled':''}>${txt}</button>`);
+    push(page-1,'‹',false,page===1);
+    const win = [];
+    for (let p=1;p<=pages;p++){ if (p===1||p===pages||Math.abs(p-page)<=2) win.push(p); }
+    let last = 0;
+    for (const p of win){ if (p-last>1) btns.push('<span class="info">…</span>'); push(p,p,p===page,false); last = p; }
+    push(page+1,'›',false,page===pages);
+    $('pager').innerHTML = btns.join('');
+    $('pager').querySelectorAll('button[data-p]').forEach(b=>{
+      b.onclick = ()=>{ page = +b.dataset.p; render(); document.querySelector('.table-card').scrollIntoView({behavior:'smooth'}); };
+    });
+  }
+
+  function onChange(){ page = 1; render(); }
+  $('q').addEventListener('input', e=>{ state.q = e.target.value; onChange(); });
+  $('fProv').addEventListener('change', e=>{ state.prov = e.target.value; onChange(); });
+  $('fLv').addEventListener('change', e=>{ state.lv = e.target.value; onChange(); });
+  $('fNt').addEventListener('change', e=>{ state.nt = e.target.value; onChange(); });
+  document.querySelectorAll('.chip').forEach(c=>{
+    c.onclick = ()=>{
+      const f = +c.dataset.f;
+      tags = (tags & f) ? (tags & ~f) : (tags | f);
+      c.classList.toggle('on', !!(tags & f));
+      onChange();
+    };
+  });
+  $('reset').onclick = ()=>{
+    state.q=''; state.prov=''; state.lv=''; state.nt=''; tags=0; page=1;
+    $('q').value=''; $('fProv').value=''; $('fLv').value=''; $('fNt').value='';
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+    render();
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>
