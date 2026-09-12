@@ -40,7 +40,7 @@
 <body>
 <div class="shell">
   <header class="topbar">
-    <div class="brand"><div><h1>奇门遁甲排盘</h1></div></div>
+    <div class="brand"><div><h1>奇门遁甲排盘</h1><p>时家 · 转盘 · 拆补法</p></div></div>
     <nav class="nav"><button class="secondary" onclick="window.print()">打印</button>
   </header>
 
@@ -58,6 +58,7 @@
 
       </div>
       <div id="error" class="error"></div>
+      <p class="fine">经纬度须由用户直接输入，不通过城市反查。纬度用于太阳高度角审计；经度用于地方真太阳时修正。</p>
     </section>
 
     <section class="card board-card" id="board">
@@ -81,6 +82,8 @@
         <div class="info-line"><span>驿马</span><b id="horseInfo">—</b></div>
         <div class="info-line"><span>局势</span><b id="patternInfo">—</b></div>
       </div></section>
+      <section class="card accuracy"><h3>精度声明</h3><p>Astronomy Engine 2.1.19 计算太阳视黄经与节气交点；官方目标为与 NOVAS 差异不超过 1 角分。均时差采用 Meeus/NOAA 解析式。毫秒显示仅代表数值分辨率，不代表绝对天文精度。</p><div class="bar"><i></i></div><p id="engineStatus">天文引擎状态：检查中</p></section>
+      <section class="card accuracy warn"><h3>术数边界</h3><p>本页是传统文化历算工具，不构成医疗、法律、金融或重大人生决策建议。不同传承在寄宫、暗干及换日规则上可能存在差异。</p></section>
     </aside>
   </main>
 
