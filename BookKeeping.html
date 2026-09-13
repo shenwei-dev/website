@@ -100,7 +100,7 @@
     function populateMonths() { const months = [...new Set(records.map(r => monthKey(r.date)))].sort().reverse(); $('monthFilter').innerHTML = '<option value="全部">全部月份</option>' + months.map(m => `<option value="${m}">${m.replace('-', ' 年 ')} 月</option>`).join(''); }
     async function loadData() {
       try {
-        const response = await fetch('./data.json', { cache:'no-store' });
+        const response = await fetch('./BookKeepingData.json', { cache:'no-store' });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         records = Array.isArray(data) ? data : (Array.isArray(data.records) ? data.records : []);
