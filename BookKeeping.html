@@ -58,7 +58,7 @@
   <main class="page">
     <header class="topbar">
       <h1>简约记账</h1>
-      <p class="subtitle" id="todayLabel">正在加载账单数据…</p>
+      <p class="subtitle" id="todayLabel">加载数据中…</p>
     </header>
 
     <section class="summary">
@@ -104,11 +104,10 @@
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         records = Array.isArray(data) ? data : (Array.isArray(data.records) ? data.records : []);
-        $('todayLabel').textContent = `${today.getFullYear()} 年 ${today.getMonth()+1} 月 · 数据来自同仓库 data.json`;
         populateMonths(); render();
       } catch (error) {
         $('todayLabel').textContent = '账单数据加载失败';
-        $('transactions').innerHTML = '<div class="error">无法读取同仓库中的 <strong>data.json</strong>。请确认文件已上传，并通过 GitHub Pages 或其他 HTTP 服务打开页面。</div>';
+        $('transactions').innerHTML = '<div class="error">无法读取数据。</div>';
       }
     }
     $('typeFilter').onchange = render; $('monthFilter').onchange = render;
