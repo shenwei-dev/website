@@ -104,9 +104,10 @@
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         records = Array.isArray(data) ? data : (Array.isArray(data.records) ? data.records : []);
+        $('todayLabel').textContent = '数据加载完毕';
         populateMonths(); render();
       } catch (error) {
-        $('todayLabel').textContent = '账单数据加载失败';
+        $('todayLabel').textContent = '数据加载失败';
         $('transactions').innerHTML = '<div class="error">无法读取数据。</div>';
       }
     }
