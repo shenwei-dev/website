@@ -202,8 +202,8 @@
 
     // 获取数据并渲染
     document.addEventListener('DOMContentLoaded', () => {
-        // 请确保 data.json 和本文件在同一个目录下
-        fetch('./data.json')
+        // 请确保 iot-security-question-bank.json 和本文件在同一个目录下
+        fetch('./iot-security-question-bank.json')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('网络请求失败');
@@ -274,7 +274,7 @@
                 document.getElementById('question-list').innerHTML = `
                     <div class="loading" style="color: #ff4d4f;">
                         数据加载失败。<br>
-                        请确保 data.json 与本网页在同一目录，并通过 HTTP 服务器（如 GitHub Pages）访问。
+                        请确保 iot-security-question-bank.json.json 与本网页在同一目录，并通过 HTTP 服务器访问。
                     </div>
                 `;
             });
